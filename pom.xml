@@ -37,6 +37,12 @@
       <artifactId>dropwizard-java8-jdbi</artifactId>
       <version>${dropwizard.java8.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.kohsuke</groupId>
+      <artifactId>github-api</artifactId>
+      <version>1.63</version>
+    </dependency>
   </dependencies>
 
   <build>
