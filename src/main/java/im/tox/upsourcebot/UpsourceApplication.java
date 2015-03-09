@@ -1,9 +1,12 @@
-package im.tox.upsourcebot.web;
+package im.tox.upsourcebot;
 
+import org.kohsuke.github.GitHub;
 import org.skife.jdbi.v2.DBI;
 
-import im.tox.upsourcebot.web.jdbi.UpsourceInstanceDAO;
-import im.tox.upsourcebot.web.resources.UpsourceInstanceResource;
+import im.tox.upsourcebot.client.GitHubConnector;
+import im.tox.upsourcebot.jdbi.UpsourceInstanceDAO;
+import im.tox.upsourcebot.resources.GitHubWebhookResource;
+import im.tox.upsourcebot.resources.UpsourceInstanceResource;
 import io.dropwizard.Application;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.java8.Java8Bundle;
@@ -24,6 +27,9 @@ public class UpsourceApplication extends Application<UpsourceConfiguration> {
     final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "h2");
     final UpsourceInstanceDAO upsourceInstanceDAO = jdbi.onDemand(UpsourceInstanceDAO.class);
     environment.jersey().register(new UpsourceInstanceResource(upsourceInstanceDAO));
+
+    final GitHub gitHub = GitHub.connectUsingOAuth(configuration.getGitHubOAuthToken());
+    environment.jersey().register(new GitHubWebhookResource(new GitHubConnector(gitHub)));
   }
 
   @Override

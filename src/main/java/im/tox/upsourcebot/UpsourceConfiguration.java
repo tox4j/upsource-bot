@@ -1,6 +1,8 @@
-package im.tox.upsourcebot.web;
+package im.tox.upsourcebot;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.kohsuke.github.GitHub;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -14,6 +16,10 @@ public class UpsourceConfiguration extends Configuration {
   @NotNull
   private DataSourceFactory database = new DataSourceFactory();
 
+  @Valid
+  @NotNull
+  private String gitHubOAuthToken;
+
   @JsonProperty("database")
   public DataSourceFactory getDataSourceFactory() {
     return database;
@@ -22,6 +28,16 @@ public class UpsourceConfiguration extends Configuration {
   @JsonProperty("database")
   public void setDataSourceFactory(DataSourceFactory database) {
     this.database = database;
+  }
+
+  @JsonProperty("githuboauthtoken")
+  public String getGitHubOAuthToken() {
+    return gitHubOAuthToken;
+  }
+
+  @JsonProperty("githuboauthtoken")
+  public void setGitHubOAuthToken(String gitHubOAuthToken) {
+    this.gitHubOAuthToken = gitHubOAuthToken;
   }
 
 }

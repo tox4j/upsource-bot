@@ -1,4 +1,4 @@
-package im.tox.upsourcebot.web.resources;
+package im.tox.upsourcebot.resources;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,8 +14,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import im.tox.upsourcebot.web.core.UpsourceInstance;
-import im.tox.upsourcebot.web.jdbi.UpsourceInstanceDAO;
+import im.tox.upsourcebot.core.UpsourceInstance;
+import im.tox.upsourcebot.jdbi.UpsourceInstanceDAO;
 
 @Path("/upsources")
 @Produces(MediaType.APPLICATION_JSON)

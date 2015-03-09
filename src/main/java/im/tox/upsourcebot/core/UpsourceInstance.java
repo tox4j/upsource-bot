@@ -1,4 +1,4 @@
-package im.tox.upsourcebot.web.core;
+package im.tox.upsourcebot.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
