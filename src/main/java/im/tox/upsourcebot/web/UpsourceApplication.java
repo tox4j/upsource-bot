@@ -41,4 +41,5 @@ public class UpsourceApplication extends Application<UpsourceConfiguration> {
     });
     bootstrap.addBundle(new Java8Bundle());
   }
+  
 }

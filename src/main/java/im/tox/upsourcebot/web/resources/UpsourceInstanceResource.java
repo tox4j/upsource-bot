@@ -34,7 +34,7 @@ public class UpsourceInstanceResource {
       return new UpsourceInstance(1L, new URL("http://upsource.slevermann.de:8081/"),
                                   "Default instance");
     } catch (MalformedURLException e) {
-      throw new WebApplicationException(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR);
+      throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -42,8 +42,7 @@ public class UpsourceInstanceResource {
   @Path("/insert")
   public Response insert() {
     try {
-      final UpsourceInstance
-          instance =
+      final UpsourceInstance instance =
           new UpsourceInstance(new URL("http://upsource.slevermann.de:8081/"), "Default instance");
       upsourceInstanceDAO.insert(instance.getName(), instance.getUpsourceURL().toString());
     } catch (MalformedURLException e) {
@@ -63,4 +62,5 @@ public class UpsourceInstanceResource {
   public List<UpsourceInstance> all() {
     return upsourceInstanceDAO.getAll();
   }
+
 }

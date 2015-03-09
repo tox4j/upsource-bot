@@ -23,4 +23,5 @@ public class UpsourceConfiguration extends Configuration {
   public void setDataSourceFactory(DataSourceFactory database) {
     this.database = database;
   }
+
 }

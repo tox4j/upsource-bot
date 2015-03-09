@@ -52,4 +52,5 @@ public interface UpsourceInstanceDAO {
   @SqlUpdate("insert into upsourceinstance (name, url) values (:name, :url)")
   @GetGeneratedKeys
   long insert(@Bind("name") String name, @Bind("url") String url);
+
 }
