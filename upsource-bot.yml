@@ -1,0 +1,20 @@
+# Database settings.
+database:
+  # the name of your JDBC driver
+  driverClass: org.h2.Driver
+
+  # the username
+  user: dummy
+
+  # the password
+  password: dummy
+
+  # the JDBC URL
+  url: jdbc:h2:./target/example.h2
+
+server:
+  type: simple
+  applicationContextPath: /
+  connector:
+    type: http
+    port: 8080
