@@ -1,12 +1,14 @@
 package im.tox.upsourcebot.client;
 
-import org.kohsuke.github.GHIssue;
-import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+
+import im.tox.upsourcebot.client.tasks.ExponentialBackoffStrategy;
+import im.tox.upsourcebot.client.tasks.GitHubCommentTask;
+import im.tox.upsourcebot.client.tasks.RetryUtil;
 
 public class GitHubConnector {
 
@@ -14,33 +16,26 @@ public class GitHubConnector {
 
   private GitHub gitHub;
 
+  private int maxRetries = 10;
+
   public GitHubConnector(GitHub gitHub) {
     this.gitHub = gitHub;
   }
 
   public void commentOnIssue(String repoName, String comment, int issueNumber) {
-    new Thread(() -> {
-      GHRepository repository;
-      try {
-        repository = gitHub.getRepository(repoName);
-      } catch (IOException e) {
-        LOGGER.error("Unable to connect to repository: " + repoName);
-        return;
-      }
-      GHIssue issue;
-      try {
-        issue = repository.getIssue(issueNumber);
-      } catch (IOException e) {
-        LOGGER.error("Unable to to find issue number " + issueNumber);
-        return;
-      }
-      try {
-        issue.comment(comment);
-      } catch (IOException e) {
-        LOGGER.error("Unable to comment on issue " + issueNumber + ": " + comment);
-      }
+    try {
+      RetryUtil
+          .retryExecute(new GitHubCommentTask(gitHub, repoName, issueNumber, comment),
+                        new ExponentialBackoffStrategy(maxRetries, 5000, 16));
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      LOGGER.error("GitHub comment thread got interrupted", e);
+    } catch (IOException e) {
+      LOGGER.error("Commenting failed after " + maxRetries + " attempts", e);
     }
-    ).start();
+  }
+
+  public void setCommitStatus() {
   }
 
 }
