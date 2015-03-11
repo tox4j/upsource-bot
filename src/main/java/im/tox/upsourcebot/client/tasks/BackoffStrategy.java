@@ -19,4 +19,5 @@ public interface BackoffStrategy {
    * Invoked when a try has been completed
    */
   void tryComplete();
+
 }

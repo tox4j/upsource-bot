@@ -15,8 +15,8 @@ public class GitHubCommitStatusTask extends GitHubTask {
   private String description;
 
   public GitHubCommitStatusTask(GitHub gitHub, String repoName, String commitSHA,
-                                GHCommitState state, String url, String description,
-                                String context) {
+      GHCommitState state, String url, String description,
+      String context) {
     super(gitHub, repoName);
     this.commitSHA = commitSHA;
     this.state = state;
@@ -30,4 +30,5 @@ public class GitHubCommitStatusTask extends GitHubTask {
     GHRepository repository = gitHub.getRepository(repoName);
     repository.createCommitStatus(commitSHA, state, url, description, context);
   }
+
 }

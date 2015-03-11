@@ -60,7 +60,7 @@ public class UpsourceInstance {
     public UpsourceInstance map(int index, ResultSet r, StatementContext ctx) throws SQLException {
       try {
         return new UpsourceInstance(r.getLong("id"), new URL(r.getString("url")),
-                                    r.getString("name"));
+            r.getString("name"));
       } catch (MalformedURLException e) {
         throw new SQLException(e.getLocalizedMessage(), e);
       }

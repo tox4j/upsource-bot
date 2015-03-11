@@ -1,6 +1,5 @@
 package im.tox.upsourcebot.jdbi;
 
-import im.tox.upsourcebot.core.UpsourceInstance;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -10,6 +9,8 @@ import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 
 import java.util.List;
 import java.util.Optional;
+
+import im.tox.upsourcebot.core.UpsourceInstance;
 
 /**
  * DAO interface for Upsource instances

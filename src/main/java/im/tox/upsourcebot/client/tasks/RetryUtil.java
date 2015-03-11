@@ -7,7 +7,7 @@ package im.tox.upsourcebot.client.tasks;
 public class RetryUtil {
 
   public static <E extends Exception> void retryExecute(RecoveringCallable<E> callable,
-                                                        BackoffStrategy strategy)
+      BackoffStrategy strategy)
       throws InterruptedException, E {
     Exception previousException = null;
     for (; strategy.retryAgain(); strategy.tryComplete()) {
@@ -27,4 +27,5 @@ public class RetryUtil {
       throw (E) previousException;
     }
   }
+
 }

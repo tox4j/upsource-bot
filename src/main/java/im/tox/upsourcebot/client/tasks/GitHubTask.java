@@ -13,4 +13,5 @@ public abstract class GitHubTask implements RecoveringCallable<IOException> {
     this.gitHub = gitHub;
     this.repoName = repoName;
   }
+
 }

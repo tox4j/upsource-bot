@@ -32,7 +32,7 @@ public class UpsourceInstanceResource {
   public UpsourceInstance getDummy() {
     try {
       return new UpsourceInstance(1L, new URL("http://upsource.slevermann.de:8081/"),
-                                  "Default instance");
+          "Default instance");
     } catch (MalformedURLException e) {
       throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
     }

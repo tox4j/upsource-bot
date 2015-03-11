@@ -2,8 +2,6 @@ package im.tox.upsourcebot;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.kohsuke.github.GitHub;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 

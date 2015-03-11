@@ -31,7 +31,7 @@ public class GitHubConnector {
     try {
       RetryUtil
           .retryExecute(new GitHubCommentTask(gitHub, repoName, issueNumber, comment),
-                        getDefaultBackoffStrategy());
+              getDefaultBackoffStrategy());
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       LOGGER.error("GitHub comment thread got interrupted", e);
@@ -41,11 +41,11 @@ public class GitHubConnector {
   }
 
   public void setPendingCommitStatus(String repoName, String commitSHA, String url,
-                                     String description, String context) {
+      String description, String context) {
     try {
       RetryUtil.retryExecute(
           new GitHubCommitStatusTask(gitHub, repoName, commitSHA, GHCommitState.PENDING, url,
-                                     description, context),
+              description, context),
           getDefaultBackoffStrategy());
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
@@ -55,7 +55,8 @@ public class GitHubConnector {
     }
   }
 
-  private static final BackoffStrategy getDefaultBackoffStrategy() {
+  private static BackoffStrategy getDefaultBackoffStrategy() {
     return new ExponentialBackoffStrategy(MAX_RETRIES, SLOT_TIME, CEILING);
   }
+
 }

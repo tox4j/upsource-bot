@@ -31,7 +31,7 @@ public class GitHubWebhookResource {
   @POST
   @Path("/issue")
   public Response receiveHook(IssueWebhook payload,
-                              @PathParam("upsource-name") String upsourceName) {
+      @PathParam("upsource-name") String upsourceName) {
     switch (payload.getAction()) {
       case "opened":
       case "assigned":
@@ -51,7 +51,7 @@ public class GitHubWebhookResource {
   @POST
   @Path("/pull-request")
   public Response receiveHook(@Valid PullRequestWebhook payload,
-                              @PathParam("upsource-name") String upsourceName) {
+      @PathParam("upsource-name") String upsourceName) {
     switch (payload.getAction()) {
       case "opened":
         // Handle creation
@@ -79,4 +79,5 @@ public class GitHubWebhookResource {
     }
     return Response.accepted().build();
   }
+
 }
