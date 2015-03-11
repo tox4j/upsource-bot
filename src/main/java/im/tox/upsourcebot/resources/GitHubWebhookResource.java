@@ -32,14 +32,28 @@ public class GitHubWebhookResource {
   @Path("/issue")
   public Response receiveHook(IssueWebhook payload,
                               @PathParam("upsource-name") String upsourceName) {
-    new Thread(() -> {
-      if ("opened".equals(payload.getAction())) {
-        String senderName = payload.getSender().getLogin();
-        String message = "Hello, @" + senderName + ", nice to meet you! I am a robot.";
-        gitHubConnector.commentOnIssue(payload.getRepository().getFullName(), message,
-                                       payload.getIssue().getNumber());
-      }
-    }).start();
+    switch (payload.getAction()) {
+      case "opened":
+        new Thread(() -> {
+          if ("opened".equals(payload.getAction())) {
+            String senderName = payload.getSender().getLogin();
+            String message = "Hello, @" + senderName + ", nice to meet you! I am a robot.";
+            gitHubConnector.commentOnIssue(payload.getRepository().getFullName(), message,
+                                           payload.getIssue().getNumber());
+          }
+        }).start();
+        break;
+      case "assigned":
+      case "unassigned":
+      case "labeled":
+      case "unlabeled":
+      case "closed":
+      case "reopened":
+        break;
+      default:
+        LOGGER.error("GitHub Issue payload format changed");
+        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    }
     return Response.accepted().build();
   }
 
@@ -52,7 +66,14 @@ public class GitHubWebhookResource {
         // Handle creation
         // Fall through to synchronized
       case "synchronized":
-        // Set commit status
+        new Thread(() -> {
+          String repoName = payload.getRepository().getFullName();
+          String commitSHA = payload.getPullRequest().getHead().getSha();
+          String url = "http://example.com/" + upsourceName;
+          String description = "Code review is pending";
+          String context = "review";
+          gitHubConnector.setPendingCommitStatus(repoName, commitSHA, url, description, context);
+        }).start();
         break;
       case "assigned":
       case "unassigned":

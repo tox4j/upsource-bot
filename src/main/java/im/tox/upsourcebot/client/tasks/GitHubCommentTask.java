@@ -6,16 +6,13 @@ import org.kohsuke.github.GitHub;
 
 import java.io.IOException;
 
-public class GitHubCommentTask implements RecoveringCallable<IOException> {
+public class GitHubCommentTask extends GitHubTask {
 
-  private GitHub gitHub;
-  private String repoName;
   private int issueNumber;
   private String comment;
 
   public GitHubCommentTask(GitHub gitHub, String repoName, int issueNumber, String comment) {
-    this.gitHub = gitHub;
-    this.repoName = repoName;
+    super(gitHub, repoName);
     this.issueNumber = issueNumber;
     this.comment = comment;
   }
