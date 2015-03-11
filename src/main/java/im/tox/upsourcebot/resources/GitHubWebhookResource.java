@@ -55,8 +55,8 @@ public class GitHubWebhookResource {
     switch (payload.getAction()) {
       case "opened":
         // Handle creation
-        // Fall through to synchronized
-      case "synchronized":
+        // Fall through to synchronize
+      case "synchronize":
         new Thread(() -> {
           String repoName = payload.getRepository().getFullName();
           String commitSHA = payload.getPullRequest().getHead().getSha();
