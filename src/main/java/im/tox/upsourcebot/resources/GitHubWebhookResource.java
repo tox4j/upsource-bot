@@ -34,15 +34,6 @@ public class GitHubWebhookResource {
                               @PathParam("upsource-name") String upsourceName) {
     switch (payload.getAction()) {
       case "opened":
-        new Thread(() -> {
-          if ("opened".equals(payload.getAction())) {
-            String senderName = payload.getSender().getLogin();
-            String message = "Hello, @" + senderName + ", nice to meet you! I am a robot.";
-            gitHubConnector.commentOnIssue(payload.getRepository().getFullName(), message,
-                                           payload.getIssue().getNumber());
-          }
-        }).start();
-        break;
       case "assigned":
       case "unassigned":
       case "labeled":
