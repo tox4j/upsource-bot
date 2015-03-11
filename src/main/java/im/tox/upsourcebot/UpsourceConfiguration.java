@@ -14,9 +14,11 @@ public class UpsourceConfiguration extends Configuration {
   @NotNull
   private DataSourceFactory database = new DataSourceFactory();
 
-  @Valid
   @NotNull
   private String gitHubOAuthToken;
+
+  @NotNull
+  private String gitHubWebhookSecret;
 
   @JsonProperty("database")
   public DataSourceFactory getDataSourceFactory() {
@@ -36,6 +38,16 @@ public class UpsourceConfiguration extends Configuration {
   @JsonProperty("githuboauthtoken")
   public void setGitHubOAuthToken(String gitHubOAuthToken) {
     this.gitHubOAuthToken = gitHubOAuthToken;
+  }
+
+  @JsonProperty("githubwebhooksecret")
+  public String getGitHubWebhookSecret() {
+    return gitHubWebhookSecret;
+  }
+
+  @JsonProperty("githubwebhooksecret")
+  public void setGitHubWebhookSecret(String gitHubWebhookSecret) {
+    this.gitHubWebhookSecret = gitHubWebhookSecret;
   }
 
 }

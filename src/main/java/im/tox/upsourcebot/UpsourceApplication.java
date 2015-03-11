@@ -4,6 +4,7 @@ import org.kohsuke.github.GitHub;
 import org.skife.jdbi.v2.DBI;
 
 import im.tox.upsourcebot.client.GitHubConnector;
+import im.tox.upsourcebot.filters.GitHubHMACFilter;
 import im.tox.upsourcebot.jdbi.UpsourceInstanceDAO;
 import im.tox.upsourcebot.resources.GitHubWebhookResource;
 import im.tox.upsourcebot.resources.UpsourceInstanceResource;
@@ -30,6 +31,8 @@ public class UpsourceApplication extends Application<UpsourceConfiguration> {
 
     final GitHub gitHub = GitHub.connectUsingOAuth(configuration.getGitHubOAuthToken());
     environment.jersey().register(new GitHubWebhookResource(new GitHubConnector(gitHub)));
+
+    environment.jersey().register(new GitHubHMACFilter(configuration.getGitHubWebhookSecret()));
   }
 
   @Override

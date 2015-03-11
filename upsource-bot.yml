@@ -13,7 +13,10 @@ database:
   url: jdbc:h2:./target/example.h2
 
 # Fill in locally
-githuboauthtoken: 
+githuboauthtoken:
+
+# Fill in locally
+githubwebhooksecret:
 
 server:
   type: simple

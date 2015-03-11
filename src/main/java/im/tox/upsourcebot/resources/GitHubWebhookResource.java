@@ -4,7 +4,6 @@ package im.tox.upsourcebot.resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -15,9 +14,11 @@ import javax.ws.rs.core.Response;
 import im.tox.upsourcebot.client.GitHubConnector;
 import im.tox.upsourcebot.core.payloads.IssueWebhook;
 import im.tox.upsourcebot.core.payloads.PullRequestWebhook;
+import im.tox.upsourcebot.filters.GitHubHMAC;
 
 @Path("/github-webhook/{upsource-name}")
 @Consumes(MediaType.APPLICATION_JSON)
+@GitHubHMAC
 public class GitHubWebhookResource {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(GitHubWebhookResource.class);
@@ -50,7 +51,7 @@ public class GitHubWebhookResource {
 
   @POST
   @Path("/pull-request")
-  public Response receiveHook(@Valid PullRequestWebhook payload,
+  public Response receiveHook(PullRequestWebhook payload,
       @PathParam("upsource-name") String upsourceName) {
     switch (payload.getAction()) {
       case "opened":
