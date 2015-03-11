@@ -2,6 +2,9 @@ package im.tox.upsourcebot.client.tasks;
 
 import java.util.Random;
 
+/**
+ * Backoff strategy with binary exponential backoff
+ */
 public class ExponentialBackoffStrategy implements BackoffStrategy {
 
   private int maxRetries;
@@ -10,6 +13,11 @@ public class ExponentialBackoffStrategy implements BackoffStrategy {
   private int tries = 0;
   private Random random = new Random();
 
+  /**
+   * @param maxRetries maximum amount of retries, must be >= 1
+   * @param slotTime   the slot time, must be >= 1
+   * @param ceiling    the ceiling for the exponent. Must be >= 1 and <= 30
+   */
   public ExponentialBackoffStrategy(int maxRetries, int slotTime, int ceiling) {
     if (maxRetries <= 0) {
       throw new IllegalArgumentException("Must try at least 1 time");

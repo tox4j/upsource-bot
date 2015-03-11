@@ -6,6 +6,16 @@ package im.tox.upsourcebot.client.tasks;
  */
 public class RetryUtil {
 
+  /**
+   * Try to execute a callable.
+   *
+   * @param callable the callable to execute
+   * @param strategy the strategy used for retrying
+   * @param <E>      the exception type recoverable by the callable
+   * @throws InterruptedException if the containing thread is interrupted
+   * @throws E                    if the execution failed after the strategy depleted its retries
+   */
+  @SuppressWarnings("unchecked")
   public static <E extends Exception> void retryExecute(RecoveringCallable<E> callable,
       BackoffStrategy strategy)
       throws InterruptedException, E {

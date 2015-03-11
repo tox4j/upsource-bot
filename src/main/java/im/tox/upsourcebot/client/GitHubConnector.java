@@ -9,8 +9,8 @@ import java.io.IOException;
 
 import im.tox.upsourcebot.client.tasks.BackoffStrategy;
 import im.tox.upsourcebot.client.tasks.ExponentialBackoffStrategy;
-import im.tox.upsourcebot.client.tasks.GitHubCommentTask;
 import im.tox.upsourcebot.client.tasks.GitHubCommitStatusTask;
+import im.tox.upsourcebot.client.tasks.GitHubIssueCommentTask;
 import im.tox.upsourcebot.client.tasks.RetryUtil;
 
 public class GitHubConnector {
@@ -30,7 +30,7 @@ public class GitHubConnector {
   public void commentOnIssue(String repoName, String comment, int issueNumber) {
     try {
       RetryUtil
-          .retryExecute(new GitHubCommentTask(gitHub, repoName, issueNumber, comment),
+          .retryExecute(new GitHubIssueCommentTask(gitHub, repoName, issueNumber, comment),
               getDefaultBackoffStrategy());
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
