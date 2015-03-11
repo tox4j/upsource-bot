@@ -1,7 +1,5 @@
 package im.tox.upsourcebot.client.tasks;
 
-import java.util.concurrent.Callable;
-
 /**
  * Callable with a specific exception to recover from.
  *
