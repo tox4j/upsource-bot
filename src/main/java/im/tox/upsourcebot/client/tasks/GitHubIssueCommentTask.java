@@ -27,12 +27,13 @@ public class GitHubIssueCommentTask extends GitHubTask {
   }
 
   @Override
-  public void call() throws IOException, InterruptedException {
+  public Void call() throws IOException, InterruptedException {
     GHRepository repository;
     repository = gitHub.getRepository(repoName);
     GHIssue issue;
     issue = repository.getIssue(issueNumber);
     issue.comment(comment);
+    return null;
   }
 
 }

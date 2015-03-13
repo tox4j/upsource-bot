@@ -52,9 +52,10 @@ public class GitHubCommitStatusTask extends GitHubTask {
   }
 
   @Override
-  public void call() throws IOException, InterruptedException {
+  public Void call() throws IOException, InterruptedException {
     GHRepository repository = gitHub.getRepository(repoName);
     repository.createCommitStatus(commitSHA, state, url, description, context);
+    return null;
   }
 
 }
