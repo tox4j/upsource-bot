@@ -2,6 +2,11 @@ package im.tox.upsourcebot;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -14,11 +19,15 @@ public class UpsourceConfiguration extends Configuration {
   @NotNull
   private DataSourceFactory database = new DataSourceFactory();
 
-  @NotNull
+  @NotBlank
   private String gitHubOAuthToken;
 
-  @NotNull
+  @NotBlank
   private String gitHubWebhookSecret;
+
+  @Valid
+  @NotEmpty
+  private List<Repository> repositories;
 
   @JsonProperty("database")
   public DataSourceFactory getDataSourceFactory() {
@@ -48,6 +57,16 @@ public class UpsourceConfiguration extends Configuration {
   @JsonProperty("githubwebhooksecret")
   public void setGitHubWebhookSecret(String gitHubWebhookSecret) {
     this.gitHubWebhookSecret = gitHubWebhookSecret;
+  }
+
+  @JsonProperty("repos")
+  public List<Repository> getRepositories() {
+    return repositories;
+  }
+
+  @JsonProperty("repos")
+  public void setRepositories(List<Repository> repositories) {
+    this.repositories = repositories;
   }
 
 }

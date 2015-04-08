@@ -18,6 +18,17 @@ githuboauthtoken:
 # Fill in locally
 githubwebhooksecret:
 
+repos:
+  - owner: tox4j
+    name: tox4j
+    reviewers:
+      - name: sonOfRa
+      - name: iphydf
+  - owner: tox4j
+    name: upsource-bot
+    reviewers:
+      - name: sonOfRa
+
 server:
   type: simple
   applicationContextPath: /
