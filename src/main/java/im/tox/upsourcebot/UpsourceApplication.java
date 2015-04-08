@@ -35,7 +35,7 @@ public class UpsourceApplication extends Application<UpsourceConfiguration> {
     GitHub gitHub = GitHub.connectUsingOAuth(configuration.getGitHubOAuthToken());
     environment.jersey().register(new GitHubWebhookResource(new GitHubConnector(gitHub)));
     environment.jersey().register(new GitHubHMACFilter(configuration.getGitHubWebhookSecret()));
-    environment.jersey().register(new UserResource(jdbi.onDemand(UserDao.class)));
+    //environment.jersey().register(new UserResource(jdbi.onDemand(UserDao.class)));
     environment.jersey().register(DeclarativeLinkingFeature.class);
   }
 
