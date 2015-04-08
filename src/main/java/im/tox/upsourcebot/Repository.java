@@ -7,6 +7,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 public class Repository {
 
   @NotBlank
@@ -18,6 +20,7 @@ public class Repository {
   private String name;
 
   @NotEmpty
+  @Valid
   @JsonProperty
   private List<Reviewer> reviewers;
 
