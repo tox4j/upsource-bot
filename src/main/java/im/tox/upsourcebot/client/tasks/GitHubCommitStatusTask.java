@@ -9,7 +9,7 @@ import java.io.IOException;
 /**
  * Task to set a Commit Status on a commit in a GitHub repository
  */
-public class GitHubCommitStatusTask extends GitHubTask {
+public class GitHubCommitStatusTask extends GitHubTask<Void> {
 
   private String commitSHA;
   private GHCommitState state;

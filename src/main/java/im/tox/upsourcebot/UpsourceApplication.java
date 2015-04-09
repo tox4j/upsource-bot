@@ -1,16 +1,20 @@
 package im.tox.upsourcebot;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
 import org.kohsuke.github.GitHub;
 import org.skife.jdbi.v2.DBI;
 
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+
 import im.tox.upsourcebot.client.GitHubConnector;
 import im.tox.upsourcebot.filters.GitHubHMACFilter;
-import im.tox.upsourcebot.jdbi.UserDao;
 import im.tox.upsourcebot.resources.GitHubWebhookResource;
-import im.tox.upsourcebot.resources.UserResource;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.db.DataSourceFactory;
@@ -33,7 +37,22 @@ public class UpsourceApplication extends Application<UpsourceConfiguration> {
     DBIFactory factory = new DBIFactory();
     DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "data-source");
     GitHub gitHub = GitHub.connectUsingOAuth(configuration.getGitHubOAuthToken());
-    environment.jersey().register(new GitHubWebhookResource(new GitHubConnector(gitHub)));
+    ImmutableMap.Builder<String, ImmutableList<Reviewer>> reviewerBuilder = ImmutableMap.builder();
+    ImmutableMap.Builder<String, ExecutorService> executorBuilder = ImmutableMap.builder();
+    configuration.getRepositories().forEach(
+        repository -> {
+          reviewerBuilder
+              .put(repository.getFullName(), ImmutableList.copyOf(repository.getReviewers()));
+          executorBuilder.put(repository.getFullName(), Executors.newSingleThreadExecutor());
+        });
+    List<String> repoNames = configuration.getRepositories().stream().map(Repository::getFullName).
+        collect(Collectors.toList());
+    GitHubConnector gitHubConnector = new GitHubConnector(gitHub, reviewerBuilder.build(),
+        configuration.getGreetings(), executorBuilder.build());
+    GitHubWebhookResource gitHubWebhookResource =
+        new GitHubWebhookResource(gitHubConnector, ImmutableList.copyOf(repoNames));
+    environment.jersey().register(
+        gitHubWebhookResource);
     environment.jersey().register(new GitHubHMACFilter(configuration.getGitHubWebhookSecret()));
     //environment.jersey().register(new UserResource(jdbi.onDemand(UserDao.class)));
     environment.jersey().register(DeclarativeLinkingFeature.class);

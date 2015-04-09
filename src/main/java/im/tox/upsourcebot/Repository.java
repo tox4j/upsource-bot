@@ -36,4 +36,8 @@ public class Repository {
     return reviewers;
   }
 
+  public String getFullName() {
+    return owner + "/" + name;
+  }
+
 }

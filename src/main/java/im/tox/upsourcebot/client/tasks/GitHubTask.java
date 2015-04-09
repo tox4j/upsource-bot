@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * Common parent for tasks that need to interact with a repository on GitHub
  */
-public abstract class GitHubTask implements RecoveringCallable<IOException, Void> {
+public abstract class GitHubTask<V> implements RecoveringCallable<IOException, V> {
 
   protected GitHub gitHub;
   protected String repoName;

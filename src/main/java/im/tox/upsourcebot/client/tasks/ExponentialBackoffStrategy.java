@@ -7,21 +7,16 @@ import java.util.Random;
  */
 public class ExponentialBackoffStrategy implements BackoffStrategy {
 
-  private int maxRetries;
   private int slotTime;
   private int ceiling;
   private int tries = 0;
   private Random random = new Random();
 
   /**
-   * @param maxRetries maximum amount of retries, must be >= 1
-   * @param slotTime   the slot time, must be >= 1
-   * @param ceiling    the ceiling for the exponent. Must be >= 1 and <= 30
+   * @param slotTime the slot time, must be >= 1
+   * @param ceiling  the ceiling for the exponent. Must be >= 1 and <= 30
    */
-  public ExponentialBackoffStrategy(int maxRetries, int slotTime, int ceiling) {
-    if (maxRetries <= 0) {
-      throw new IllegalArgumentException("Must try at least 1 time");
-    }
+  public ExponentialBackoffStrategy(int slotTime, int ceiling) {
     if (slotTime <= 0) {
       throw new IllegalArgumentException("Slot time must be at least 1 ms");
     }
@@ -32,7 +27,6 @@ public class ExponentialBackoffStrategy implements BackoffStrategy {
       throw new IllegalArgumentException(
           "Ceiling cannot be larger than 30, to prevent overflows");
     }
-    this.maxRetries = maxRetries;
     this.slotTime = slotTime;
     this.ceiling = ceiling;
   }
@@ -50,7 +44,7 @@ public class ExponentialBackoffStrategy implements BackoffStrategy {
 
   @Override
   public boolean retryAgain() {
-    return maxRetries > tries;
+    return true;
   }
 
   @Override

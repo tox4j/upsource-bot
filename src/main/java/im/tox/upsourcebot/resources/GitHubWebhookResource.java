@@ -1,13 +1,14 @@
 package im.tox.upsourcebot.resources;
 
 
+import com.google.common.collect.ImmutableList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -16,7 +17,7 @@ import im.tox.upsourcebot.core.payloads.IssueWebhook;
 import im.tox.upsourcebot.core.payloads.PullRequestWebhook;
 import im.tox.upsourcebot.filters.GitHubHMAC;
 
-@Path("/github-webhook/{upsource-name}")
+@Path("/github-webhook/")
 @Consumes(MediaType.APPLICATION_JSON)
 @GitHubHMAC
 public class GitHubWebhookResource {
@@ -24,15 +25,16 @@ public class GitHubWebhookResource {
   private static final Logger LOGGER = LoggerFactory.getLogger(GitHubWebhookResource.class);
 
   private GitHubConnector gitHubConnector;
+  private ImmutableList<String> repoNames;
 
-  public GitHubWebhookResource(GitHubConnector gitHubConnector) {
+  public GitHubWebhookResource(GitHubConnector gitHubConnector, ImmutableList<String> repoNames) {
     this.gitHubConnector = gitHubConnector;
+    this.repoNames = repoNames;
   }
 
   @POST
   @Path("/issue")
-  public Response receiveHook(IssueWebhook payload,
-      @PathParam("upsource-name") String upsourceName) {
+  public Response receiveHook(IssueWebhook payload) {
     switch (payload.getAction()) {
       case "opened":
       case "assigned":
@@ -51,21 +53,19 @@ public class GitHubWebhookResource {
 
   @POST
   @Path("/pull-request")
-  public Response receiveHook(PullRequestWebhook payload,
-      @PathParam("upsource-name") String upsourceName) {
+  public Response receiveHook(PullRequestWebhook payload) {
+    String repoName = payload.getRepository().getFullName();
+    if (!repoNames.contains(repoName)) {
+      LOGGER.error("Repository {} is not configured.", repoName);
+      return Response.status(Response.Status.BAD_REQUEST).build();
+    }
     switch (payload.getAction()) {
       case "opened":
+        gitHubConnector
+            .assignAndGreet(repoName, payload.getSender().getLogin(), payload.getNumber());
         // Handle creation
         // Fall through to synchronize
       case "synchronize":
-        new Thread(() -> {
-          String repoName = payload.getRepository().getFullName();
-          String commitSHA = payload.getPullRequest().getHead().getSha();
-          String url = "http://example.com/" + upsourceName;
-          String description = "Code review is pending";
-          String context = "review";
-          gitHubConnector.setPendingCommitStatus(repoName, commitSHA, url, description, context);
-        }).start();
         break;
       case "assigned":
       case "unassigned":

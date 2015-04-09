@@ -9,9 +9,8 @@ import java.io.IOException;
 /**
  * Task to comment on an issue in a GitHub repository
  */
-public class GitHubIssueCommentTask extends GitHubTask {
+public class GitHubIssueCommentTask extends GitHubIssueTask {
 
-  private int issueNumber;
   private String comment;
 
   /**
@@ -21,8 +20,7 @@ public class GitHubIssueCommentTask extends GitHubTask {
    * @param comment     the comment to be sent to the issue
    */
   public GitHubIssueCommentTask(GitHub gitHub, String repoName, int issueNumber, String comment) {
-    super(gitHub, repoName);
-    this.issueNumber = issueNumber;
+    super(gitHub, repoName, issueNumber);
     this.comment = comment;
   }
 

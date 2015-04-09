@@ -1,7 +1,7 @@
 package im.tox.upsourcebot.client.tasks;
 
 /**
- * Provides different strategies to RetryUtil
+ * Provides different strategies to RetryingCallable
  */
 public interface BackoffStrategy {
 

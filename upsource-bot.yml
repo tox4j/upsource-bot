@@ -29,6 +29,13 @@ repos:
     reviewers:
       - name: sonOfRa
 
+# This currently needs to contain 2 %s tokens.
+# The first token is replaced with the name of the author, the second token is for the reviewer.
+# TODO: write a Hibernate validator to ensure this is valid on startup
+greetings: "Welcome, @%s, thanks for contributing to tox4j!
+@%s has been assigned to this review, and will get to you shortly about any necessary changes to your Pull Request.
+In the meantime, our CI will build your Pull Request and report any errors."
+
 server:
   type: simple
   applicationContextPath: /
