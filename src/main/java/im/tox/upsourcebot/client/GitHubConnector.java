@@ -1,6 +1,5 @@
 package im.tox.upsourcebot.client;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import org.kohsuke.github.GHCommitState;
@@ -14,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import im.tox.upsourcebot.Reviewer;
+import im.tox.upsourcebot.Repository;
 import im.tox.upsourcebot.client.tasks.FindReviewerTask;
 import im.tox.upsourcebot.client.tasks.GitHubAssignTask;
 import im.tox.upsourcebot.client.tasks.GitHubCommitStatusTask;
@@ -28,16 +27,14 @@ public class GitHubConnector {
   private static final Logger LOGGER = LoggerFactory.getLogger(GitHubConnector.class);
 
   private final GitHub gitHub;
-  private final ImmutableMap<String, ImmutableList<Reviewer>> reviewCandidates;
-  private final String greetingsFormat;
+  private final ImmutableMap<String, Repository> repositories;
   private final ImmutableMap<String, ExecutorService> executors;
 
   public GitHubConnector(GitHub gitHub,
-      ImmutableMap<String, ImmutableList<Reviewer>> reviewCandidates,
-      String greetingsFormat, ImmutableMap<String, ExecutorService> executors) {
+      ImmutableMap<String, Repository> repositories,
+      ImmutableMap<String, ExecutorService> executors) {
     this.gitHub = gitHub;
-    this.reviewCandidates = reviewCandidates;
-    this.greetingsFormat = greetingsFormat;
+    this.repositories = repositories;
     this.executors = executors;
   }
 
@@ -59,8 +56,8 @@ public class GitHubConnector {
     executorService.submit(RetryingCallable
         .of(new GitHubAssignTask(gitHub, repoName, issueNumber, reviewer)));
     executorService.submit(RetryingCallable
-        .of(new GitHubGreeterTask(gitHub, repoName, issueNumber, greetingsFormat, reviewer,
-            author)));
+        .of(new GitHubGreeterTask(gitHub, repoName, issueNumber,
+            repositories.get(repoName).getGreetings(), reviewer, author)));
   }
 
   public void handleStartup() {
@@ -69,8 +66,8 @@ public class GitHubConnector {
   }
 
   private Future<String> findReviewer(String repoName, String author) {
-    return executors.get(repoName).submit(RetryingCallable
-        .of(new FindReviewerTask(gitHub, repoName, reviewCandidates.get(repoName), author)));
+    return executors.get(repoName).submit(RetryingCallable.of(
+        new FindReviewerTask(gitHub, repoName, repositories.get(repoName).getReviewers(), author)));
   }
 
   private void handleRepositoryStartup(String repoName, ExecutorService executorService) {

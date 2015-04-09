@@ -29,9 +29,6 @@ public class UpsourceConfiguration extends Configuration {
   @NotEmpty
   private List<Repository> repositories;
 
-  @NotBlank
-  private String greetings;
-
   @JsonProperty("database")
   public DataSourceFactory getDataSourceFactory() {
     return database;
@@ -70,16 +67,6 @@ public class UpsourceConfiguration extends Configuration {
   @JsonProperty("repos")
   public void setRepositories(List<Repository> repositories) {
     this.repositories = repositories;
-  }
-
-  @JsonProperty("greetings")
-  public String getGreetings() {
-    return greetings;
-  }
-
-  @JsonProperty("greetings")
-  public void setGreetings(String greetings) {
-    this.greetings = greetings;
   }
 
 }

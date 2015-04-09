@@ -24,6 +24,10 @@ public class Repository {
   @JsonProperty
   private List<Reviewer> reviewers;
 
+  @NotBlank
+  @JsonProperty
+  private String greetings;
+
   public String getOwner() {
     return owner;
   }
@@ -34,6 +38,10 @@ public class Repository {
 
   public List<Reviewer> getReviewers() {
     return reviewers;
+  }
+
+  public String getGreetings() {
+    return greetings;
   }
 
   public String getFullName() {
