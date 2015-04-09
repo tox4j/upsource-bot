@@ -38,9 +38,11 @@ public class UpsourceApplication extends Application<UpsourceConfiguration> {
     DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "data-source");
     GitHub gitHub = GitHub.connectUsingOAuth(configuration.getGitHubOAuthToken());
     ImmutableMap.Builder<String, ImmutableList<Reviewer>> reviewerBuilder = ImmutableMap.builder();
+    ImmutableMap.Builder<String, Repository> repositoryBuilder = ImmutableMap.builder();
     ImmutableMap.Builder<String, ExecutorService> executorBuilder = ImmutableMap.builder();
     configuration.getRepositories().forEach(
         repository -> {
+          repositoryBuilder.put(repository.getFullName(), repository);
           reviewerBuilder
               .put(repository.getFullName(), ImmutableList.copyOf(repository.getReviewers()));
           executorBuilder.put(repository.getFullName(), Executors.newSingleThreadExecutor());
@@ -49,6 +51,7 @@ public class UpsourceApplication extends Application<UpsourceConfiguration> {
         collect(Collectors.toList());
     GitHubConnector gitHubConnector = new GitHubConnector(gitHub, reviewerBuilder.build(),
         configuration.getGreetings(), executorBuilder.build());
+    gitHubConnector.handleStartup();
     GitHubWebhookResource gitHubWebhookResource =
         new GitHubWebhookResource(gitHubConnector, ImmutableList.copyOf(repoNames));
     environment.jersey().register(

@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 public class GitHubIssueCommentTask extends GitHubIssueTask {
 
-  private String comment;
+  protected String comment;
 
   /**
    * @param gitHub      the GitHub instance for this task
@@ -35,4 +35,3 @@ public class GitHubIssueCommentTask extends GitHubIssueTask {
   }
 
 }
-

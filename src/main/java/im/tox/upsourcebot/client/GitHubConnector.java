@@ -4,23 +4,28 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import org.kohsuke.github.GHCommitState;
+import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GitHub;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
+import java.util.concurrent.Future;
 
 import im.tox.upsourcebot.Reviewer;
+import im.tox.upsourcebot.client.tasks.FindReviewerTask;
 import im.tox.upsourcebot.client.tasks.GitHubAssignTask;
 import im.tox.upsourcebot.client.tasks.GitHubCommitStatusTask;
+import im.tox.upsourcebot.client.tasks.GitHubGetOpenPullRequestsTask;
+import im.tox.upsourcebot.client.tasks.GitHubGreeterTask;
 import im.tox.upsourcebot.client.tasks.GitHubIssueCommentTask;
 import im.tox.upsourcebot.client.tasks.RetryingCallable;
 
 public class GitHubConnector {
 
-  private static final int SLOT_TIME = 5000;
-  private static final int CEILING = 16;
+  private static final Logger LOGGER = LoggerFactory.getLogger(GitHubConnector.class);
 
   private final GitHub gitHub;
   private final ImmutableMap<String, ImmutableList<Reviewer>> reviewCandidates;
@@ -49,23 +54,44 @@ public class GitHubConnector {
   }
 
   public void assignAndGreet(String repoName, String author, int issueNumber) {
-    String reviewer = findReviewer(repoName, author);
-    executors.get(repoName).submit(RetryingCallable
+    Future<String> reviewer = findReviewer(repoName, author);
+    ExecutorService executorService = executors.get(repoName);
+    executorService.submit(RetryingCallable
         .of(new GitHubAssignTask(gitHub, repoName, issueNumber, reviewer)));
-    commentOnIssue(repoName, String.format(greetingsFormat, author, reviewer), issueNumber);
+    executorService.submit(RetryingCallable
+        .of(new GitHubGreeterTask(gitHub, repoName, issueNumber, greetingsFormat, reviewer,
+            author)));
   }
 
-  private String findReviewer(String repoName, String author) {
-    List<Reviewer> candidates = reviewCandidates.get(repoName);
-    Reviewer reviewer;
-    if (candidates.size() == 1) {
-      reviewer = candidates.get(0);
-    } else {
-      candidates = candidates.stream().filter(r -> !r.getName().equals(author)).collect(
-          Collectors.toList());
-      reviewer = candidates.get(new Random().nextInt(candidates.size()));
-    }
-    return reviewer.getName();
+  public void handleStartup() {
+    executors
+        .forEach(this::handleRepositoryStartup);
+  }
+
+  private Future<String> findReviewer(String repoName, String author) {
+    return executors.get(repoName).submit(RetryingCallable
+        .of(new FindReviewerTask(gitHub, repoName, reviewCandidates.get(repoName), author)));
+  }
+
+  private void handleRepositoryStartup(String repoName, ExecutorService executorService) {
+    Future<List<GHPullRequest>> pullRequests = executorService
+        .submit(RetryingCallable.of(new GitHubGetOpenPullRequestsTask(gitHub, repoName)));
+    executorService.execute(() -> {
+      List<GHPullRequest> prs;
+      try {
+        prs = pullRequests.get();
+      } catch (InterruptedException e) {
+        LOGGER.error("Pull Request fetch was interrupted", e);
+        Thread.currentThread().interrupt();
+        return;
+      } catch (ExecutionException e) {
+        LOGGER.error("Pull Request fetch task was aborted", e);
+        return;
+      }
+      prs.stream().filter(ghPullRequest -> ghPullRequest.getAssignee() == null).forEach(
+          ghPullRequest -> assignAndGreet(repoName, ghPullRequest.getUser().getLogin(),
+              ghPullRequest.getNumber()));
+    });
   }
 
 }
