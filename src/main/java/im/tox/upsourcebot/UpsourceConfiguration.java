@@ -29,6 +29,9 @@ public class UpsourceConfiguration extends Configuration {
   @NotEmpty
   private List<Repository> repositories;
 
+  @NotBlank
+  private String githubName;
+
   @JsonProperty("database")
   public DataSourceFactory getDataSourceFactory() {
     return database;
@@ -67,6 +70,16 @@ public class UpsourceConfiguration extends Configuration {
   @JsonProperty("repos")
   public void setRepositories(List<Repository> repositories) {
     this.repositories = repositories;
+  }
+
+  @JsonProperty("githubname")
+  public String getGithubName() {
+    return githubName;
+  }
+
+  @JsonProperty("githubname")
+  public void setGithubName(String githubName) {
+    this.githubName = githubName;
   }
 
 }

@@ -18,6 +18,9 @@ githuboauthtoken:
 # Fill in locally
 githubwebhooksecret:
 
+# Name of the account that runs the bot
+githubname: toxbot
+
 # The greetings needs to contain 2 %s tokens.
 # The first token is replaced with the name of the author, the second token is for the reviewer.
 # TODO: write a Hibernate validator to ensure this is valid on startup
