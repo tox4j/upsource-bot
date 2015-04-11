@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import im.tox.upsourcebot.client.GitHubConnector;
+import im.tox.upsourcebot.core.payloads.IssueCommentWebhook;
 import im.tox.upsourcebot.core.payloads.IssueWebhook;
 import im.tox.upsourcebot.core.payloads.PullRequestWebhook;
 import im.tox.upsourcebot.filters.GitHubHMAC;
@@ -77,6 +78,24 @@ public class GitHubWebhookResource {
       default:
         LOGGER.error("GitHub Pull request payload format changed");
         return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    }
+    return Response.accepted().build();
+  }
+
+  @POST
+  @Path("/issue-comment")
+  public Response receiveHook(IssueCommentWebhook payload) {
+    String repoName = payload.getRepository().getFullName();
+    if (!repoNames.contains(repoName)) {
+      LOGGER.error("Repository {} is not configured.", repoName);
+      return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
+    if (payload.getAction().equals("created")) {
+
+    } else {
+      LOGGER.error("GitHub issue comment payload format changed");
+      return Response.status(Response.Status.NOT_IMPLEMENTED).build();
     }
     return Response.accepted().build();
   }
